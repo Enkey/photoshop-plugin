@@ -21,8 +21,7 @@ function getFileName(fileName) {
     return decodeURI(fileName.match(/(.*)\.[^\.]+$/)[1]);
 }
 
-
-function drawTemplate(options) {
+function drawTemplate(options, progressCallback) {
     var docTemplate = open(options.templateFile);
     var oldName = docTemplate.name;
     var doc;
@@ -30,6 +29,10 @@ function drawTemplate(options) {
     var shapeFileName;
     var shapeName;
     var shapeImage;
+
+    var getProgress = function (i) {
+        return (100 * i) / options.shapeFiles.length
+    };
 
     for (var i = 0; i < options.shapeFiles.length; i++) {
 
@@ -42,14 +45,17 @@ function drawTemplate(options) {
         shapeName = doc.artLayers.getByName(TEMPLATE_TITLE);
         shapeName.textItem.contents = shapeFileName;
 
-
         shapeImage = doc.artLayers.getByName(TEMPLATE_IMAGE);
         doc.activeLayer = replaceContents(doc, new File(options.shapeFiles[i]), shapeImage);
         doc.activeLayer.name = TEMPLATE_IMAGE;
 
-        exportPng(doc, getFileName(oldName) + "_" + shapeFileName);
+        if (options.exportToPng) {
+            exportPng(doc, getFileName(oldName) + "_" + shapeFileName);
+        }
 
         doc.save();
+
+        progressCallback(getProgress(i))
     }
 
 }
@@ -67,7 +73,6 @@ function exportPng(doc, file) {
 
 function replaceContents(doc, newFile, theSO) {
     doc.activeLayer = theSO;
-// =======================================================
     var idplacedLayerReplaceContents = stringIDToTypeID("placedLayerReplaceContents");
     var desc3 = new ActionDescriptor();
     var idnull = charIDToTypeID("null");
