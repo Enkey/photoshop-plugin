@@ -37,8 +37,12 @@ chooseShapesButton.onClick = function () {
 //Checkbox - export or not
 var checkBoxGroup = w.add('group {orientation: "row", preferredSize:[120, 24], alignment: "fill",  alignChildren: ["left", " "]}');
 var checkboxExport = checkBoxGroup.add('checkbox{text: "Auto export to PNG?"}');
+checkboxExport.onClick = function () {
+    options.exportToPng = this.value;
+    return false;
+};
 
-//Checkbox - export or not
+//Progress bar
 var progressBarGroup = w.add('group {orientation: "row", preferredSize:[500, 24], alignment: "fill",  alignChildren: ["left", " "]}');
 var progressBar = progressBarGroup.add('progressbar {value: 0, size: [500, 24]}');
 progressBar.visible = false;
